@@ -1,6 +1,9 @@
+import datetime
+
 from data.cages import Cage
 from data.owners import Owner
 from typing import List
+from bookings import Booking
 
 
 def create_account(name: str, email: str) -> Owner:
@@ -39,3 +42,14 @@ def find_cages_for_user(account: Owner) -> List[Cage]:
     query = Cage.objects(id__in=account.cage_ids)
     cages = list(query)
     return cages
+
+
+def add_available_date(cage: Cage,
+                       startdate: datetime.datetime, days: int) -> Cage:
+    booking = Booking()
+    booking.check_in_date = startdate
+    booking.check_out_date = startdate + datetime.timedelta(days=days)
+    cage = Cage.objects(id=cage.id).first()
+    cage.bookings.append(booking)
+    cage.save
+    return cage

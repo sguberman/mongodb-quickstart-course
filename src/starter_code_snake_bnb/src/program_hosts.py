@@ -1,4 +1,5 @@
 from colorama import Fore
+from dateutil.parser import parser
 from infrastructure.switchlang import switch
 import infrastructure.state as state
 import services.data_service as svc
@@ -114,19 +115,44 @@ def list_cages(suppress_header=False):
 
     cages = svc.find_cages_for_user(state.active_account)
     print(f'You have {len(cages)} cages.')
-    for c in cages:
-        print(f' * {c.name} is {c.square_meters} meters.')
+    for i, c in enumerate(cages):
+        print(f' [{i + 1}] {c.name} is {c.square_meters} meters.')
 
 
 def update_availability():
     print(' ****************** Add available date **************** ')
 
-    # TODO: Require an account
-    # TODO: list cages
-    # TODO: Choose cage
-    # TODO: Set dates, save to DB.
+    if not state.active_account:
+        error_msg('You must first log in to update availability.')
+        return
 
-    print(" -------- NOT IMPLEMENTED -------- ")
+    list_cages(suppress_header=True)
+
+    cage_number = input('Enter cage number: ')
+    if not cage_number.strip():
+        error_msg('Cancelled')
+        print()
+        return
+
+    cage_number = int(cage_number)
+    cages = svc.find_cages_for_user(state.active_account)
+    selected_cage = cages[cage_number - 1]
+    success_msg(f'Selected cage {selected_cage.name}.')
+
+    start_date = parser.parse(
+        input('Enter available date [yyyy-mm-dd]: ')
+    )
+    days = int(input('How many days is this block of time? '))
+
+    svc.add_available_date(
+        state.active_account,
+        selected_cage,
+        start_date,
+        days
+    )
+    state.reload_account()
+
+    success_msg(f'Date added to cage {selected_cage.name}.')
 
 
 def view_bookings():
