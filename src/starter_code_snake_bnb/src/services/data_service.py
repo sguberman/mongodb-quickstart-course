@@ -2,8 +2,8 @@ import datetime
 
 from data.cages import Cage
 from data.owners import Owner
+from data.bookings import Booking
 from typing import List
-from bookings import Booking
 
 
 def create_account(name: str, email: str) -> Owner:
