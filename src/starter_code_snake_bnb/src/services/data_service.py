@@ -51,5 +51,5 @@ def add_available_date(cage: Cage,
     booking.check_out_date = startdate + datetime.timedelta(days=days)
     cage = Cage.objects(id=cage.id).first()
     cage.bookings.append(booking)
-    cage.save
+    cage.save()
     return cage

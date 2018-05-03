@@ -1,5 +1,5 @@
 from colorama import Fore
-from dateutil.parser import parser
+from dateutil import parser
 from infrastructure.switchlang import switch
 import infrastructure.state as state
 import services.data_service as svc
@@ -145,7 +145,6 @@ def update_availability():
     days = int(input('How many days is this block of time? '))
 
     svc.add_available_date(
-        state.active_account,
         selected_cage,
         start_date,
         days
