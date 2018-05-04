@@ -3,6 +3,7 @@ import datetime
 from data.cages import Cage
 from data.owners import Owner
 from data.bookings import Booking
+from data.snakes import Snake
 from typing import List
 
 
@@ -53,3 +54,24 @@ def add_available_date(cage: Cage,
     cage.bookings.append(booking)
     cage.save()
     return cage
+
+
+def add_snake(account: Owner, name: str, length: float, species: str,
+              is_venomous: bool) -> Snake:
+    snake = Snake()
+    snake.name = name
+    snake.length = length
+    snake.species = species
+    snake.is_venomous = is_venomous
+    snake.save()
+
+    owner = find_account_by_email(account.email)
+    owner.snake_ids.append(snake.id)
+    owner.save()
+
+    return snake
+
+
+def get_snakes_for_user(account: Owner) -> List[Snake]:
+    snakes = Snake.objects(id__in=account.snake_ids).all()
+    return list(snakes)
